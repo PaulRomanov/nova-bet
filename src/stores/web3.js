@@ -98,6 +98,58 @@ export const useWeb3Store = defineStore('web3', () => {
     gameHistory.value = []
   }
 
+  /** Внесение средств (депозит) на игровой баланс казино */
+  async function deposit(amountEth) {
+    isPending.value = true
+    error.value = ''
+    
+    await new Promise((resolve) => setTimeout(resolve, 800))
+
+    try {
+      const amount = parseFloat(amountEth)
+      if (isNaN(amount) || amount <= 0) {
+        throw new Error('Enter a valid amount to deposit.')
+      }
+      if (amount > parseFloat(walletBalance.value)) {
+        throw new Error('Insufficient funds in your wallet.')
+      }
+
+      walletBalance.value = (parseFloat(walletBalance.value) - amount).toFixed(4)
+      casinoBalance.value = (parseFloat(casinoBalance.value) + amount).toFixed(4)
+      casinoReserve.value = (parseFloat(casinoReserve.value) + amount).toFixed(4)
+    } catch (err) {
+      setError(err.message || 'Deposit failed')
+    } finally {
+      isPending.value = false
+    }
+  }
+
+  /** Вывод средств с баланса казино на кошелек */
+  async function withdraw(amountEth) {
+    isPending.value = true
+    error.value = ''
+
+    await new Promise((resolve) => setTimeout(resolve, 800))
+
+    try {
+      const amount = parseFloat(amountEth)
+      if (isNaN(amount) || amount <= 0) {
+        throw new Error('Enter a valid amount to withdraw.')
+      }
+      if (amount > parseFloat(casinoBalance.value)) {
+        throw new Error('Insufficient casino balance.')
+      }
+
+      casinoBalance.value = (parseFloat(casinoBalance.value) - amount).toFixed(4)
+      walletBalance.value = (parseFloat(walletBalance.value) + amount).toFixed(4)
+      casinoReserve.value = (parseFloat(casinoReserve.value) - amount).toFixed(4)
+    } catch (err) {
+      setError(err.message || 'Withdraw failed')
+    } finally {
+      isPending.value = false
+    }
+  }
+
   /** Игра Coin Flip (Полная симуляция логики твое—го контракта Casino.sol) */
   async function flip(choice, amountEth) {
     isPending.value = true
@@ -186,6 +238,8 @@ export const useWeb3Store = defineStore('web3', () => {
     isContractConfigured,
     connectWallet,
     disconnectWallet,
+    deposit,
+    withdraw,
     flip,
     refreshBalances,
     playClick,
