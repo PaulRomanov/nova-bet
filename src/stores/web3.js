@@ -2,8 +2,11 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { ethers } from 'ethers'
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from '../contracts/casino.js'
+import { useLangStore } from './lang.js'
 
 export const useWeb3Store = defineStore('web3', () => {
+  const lang = useLangStore()
+
   // ─── State ─────────────────────────────────────────────────────────────────
   const provider = ref(null)
   const signer = ref(null)
@@ -86,7 +89,7 @@ export const useWeb3Store = defineStore('web3', () => {
         wallet,
       )
     } catch (err) {
-      setError('Ошибка симуляции кошелька')
+      setError(lang.t.walletSimulationError)
     } finally {
       isLoading.value = false
     }
@@ -175,7 +178,7 @@ export const useWeb3Store = defineStore('web3', () => {
         throw new Error('Enter a valid bet amount.')
       }
       if (bet > parseFloat(casinoBalance.value)) {
-        throw new Error('Недостаточно средств на депозите казино. Пожалуйста, пополните баланс!')
+        throw new Error(lang.t.errorNoFunds)
       }
 
       // Математика генерации случайности (как в смарт-контракте)
