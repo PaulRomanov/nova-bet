@@ -21,10 +21,7 @@ const lang = useLangStore()
 
     <div class="flex items-center gap-3">
       <button
-        @click="
-          lang.toggleLang()
-          web3.playClick()
-        "
+        @click="lang.toggleLang(); web3.playClick()"
         class="px-3 py-1.5 text-xs font-bold rounded-lg border border-white/10 hover:border-violet-500/50 hover:bg-white/5 transition-all duration-200"
       >
         {{ lang.currentLang.toUpperCase() }}

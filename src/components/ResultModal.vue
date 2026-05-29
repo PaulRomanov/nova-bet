@@ -82,6 +82,21 @@ function close() {
           <div v-else class="text-slate-400 text-sm font-medium">
             {{ lang.t.loseModalSubtext }}
           </div>
+
+          <div v-if="data.txHash" class="text-xs text-slate-500 pt-2 border-t border-white/5">
+            <a
+              :href="`https://sepolia.etherscan.io/tx/${data.txHash}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 text-violet-400 hover:text-violet-300 transition-colors hover:underline"
+            >
+              <span>{{ lang.t.viewOnEtherscan }}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 animate-pulse" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+                <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+              </svg>
+            </a>
+          </div>
         </div>
 
         <button

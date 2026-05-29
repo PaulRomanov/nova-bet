@@ -8,6 +8,7 @@ import BalancePanel from './components/BalancePanel.vue'
 import GameHistory from './components/GameHistory.vue'
 import CoinFlipGame from './components/CoinFlipGame.vue'
 import ResultModal from './components/ResultModal.vue'
+import WrongNetworkBanner from './components/WrongNetworkBanner.vue'
 
 const web3 = useWeb3Store()
 const lang = useLangStore()
@@ -36,6 +37,8 @@ function openResultModal(result) {
     </div>
 
     <TheHeader />
+
+    <WrongNetworkBanner />
 
     <div
       v-if="!web3.isContractConfigured"

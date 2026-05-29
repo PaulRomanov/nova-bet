@@ -12,6 +12,7 @@ const betAmount = ref('0.01')
 const lastResult = ref(null)
 const isFlipping = ref(false)
 const selectedSide = ref(null)
+const showFairnessInfo = ref(false)
 
 const SIDES = computed(() => [
   { id: 0, label: lang.t.heads, emoji: '🦅' },
@@ -195,9 +196,38 @@ function selectChip(chip) {
       {{ lang.t.playToEarn }}
     </button>
 
-    <p class="text-xs text-slate-700 text-center max-w-xs">
-      {{ lang.t.houseEdge }}
-    </p>
+    <div class="flex flex-col items-center gap-2 max-w-sm w-full border-t border-white/5 pt-4">
+      <p class="text-[11px] text-slate-700 text-center">
+        {{ lang.t.houseEdge }}
+      </p>
+      
+      <button 
+        @click="showFairnessInfo = !showFairnessInfo; web3.playClick()"
+        class="text-[11px] text-violet-400/80 hover:text-violet-300 transition-colors underline cursor-pointer select-none"
+      >
+        {{ lang.t.provablyFair }}
+      </button>
+
+      <Transition name="fade-height">
+        <div 
+          v-if="showFairnessInfo" 
+          class="w-full text-[11px] text-slate-500 bg-white/5 border border-white/10 rounded-xl p-3.5 space-y-2 mt-1 shadow-inner text-left"
+        >
+          <p>{{ lang.t.provablyFairDesc }}</p>
+          <code class="block bg-slate-950/80 p-2 rounded border border-white/5 font-mono text-[10px] text-cyan-400 break-all leading-relaxed select-all">
+            keccak256(abi.encodePacked(<br>
+            &nbsp;&nbsp;blockhash(block.number - 1),<br>
+            &nbsp;&nbsp;block.timestamp,<br>
+            &nbsp;&nbsp;msg.sender,<br>
+            &nbsp;&nbsp;betAmount<br>
+            )) % 2
+          </code>
+          <p class="text-[10px] leading-relaxed text-slate-600">
+            {{ lang.t.randomnessDisclaimer }}
+          </p>
+        </div>
+      </Transition>
+    </div>
   </section>
 </template>
 
@@ -212,5 +242,20 @@ function selectChip(chip) {
 }
 .fade-up-leave-to {
   opacity: 0;
+}
+
+.fade-height-enter-active,
+.fade-height-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 250px;
+  overflow: hidden;
+}
+.fade-height-enter-from,
+.fade-height-leave-to {
+  opacity: 0;
+  max-height: 0;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-top: 0 !important;
 }
 </style>
