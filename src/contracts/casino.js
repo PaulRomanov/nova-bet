@@ -17,7 +17,7 @@
  */
 
 // ⚠️  REPLACE with your deployed contract address from Remix
-export const CONTRACT_ADDRESS = '0xd9145CCE52D386f254917e481eB44e9943F39138'
+export const CONTRACT_ADDRESS = '0xc9682f026629c21b04B0dcA73c43f6Ce11Fd00b4'
 
 // ⚠️  REPLACE with the ABI copied from Remix "Solidity Compiler → ABI"
 export const CONTRACT_ABI = [
