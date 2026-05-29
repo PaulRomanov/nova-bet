@@ -15,7 +15,7 @@ const lang = useLangStore()
       <span>{{ lang.t.wrongNetwork }}</span>
       <button
         @click="web3.switchToSepolia()"
-        class="px-3 py-1 rounded-lg bg-amber-500 text-slate-950 text-xs font-bold hover:bg-amber-400 transition-colors shrink-0"
+        class="px-3 py-1 rounded-lg bg-amber-500 text-slate-950 text-xs font-bold hover:bg-amber-400 transition-colors shrink-0 cursor-pointer"
       >
         {{ lang.t.switchNetwork }}
       </button>

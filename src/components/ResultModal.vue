@@ -101,7 +101,7 @@ function close() {
 
         <button
           @click="close"
-          class="w-full py-3.5 rounded-xl font-bold uppercase tracking-wider text-sm transition-all duration-200 active:scale-95"
+          class="w-full py-3.5 rounded-xl font-bold uppercase tracking-wider text-sm transition-all duration-200 active:scale-95 cursor-pointer"
           :class="
             data.won
               ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-[0_0_20px_rgba(16,185,129,0.4)]'

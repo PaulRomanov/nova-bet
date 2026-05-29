@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { useWeb3Store } from '../stores/web3.js'
 import { useLangStore } from '../stores/lang.js'
 import { formatTs } from '../utils/date.js'
@@ -15,9 +15,10 @@ const lang = useLangStore()
 
     <div
       v-if="web3.gameHistory.length === 0"
-      class="text-slate-600 text-sm text-center py-6"
+      class="flex flex-col items-center justify-center py-10 text-slate-500/60 text-sm gap-2 select-none"
     >
-      {{ lang.t.noGames }}
+      <span class="text-3xl opacity-30">🪙</span>
+      <span>{{ lang.t.noGames }}</span>
     </div>
 
     <ul v-else class="space-y-2">
@@ -28,7 +29,7 @@ const lang = useLangStore()
         :class="g.won ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-red-500/10 border border-red-500/20'"
       >
         <span>
-          {{ g.choice === 0 ? '🦅' : '🔮' }}
+          {{ g.choice === 0 ? '🦅' : '🪙' }}
           <span class="ml-1 text-slate-400">{{ g.bet }} ETH</span>
         </span>
         <span :class="g.won ? 'text-emerald-400' : 'text-red-400'" class="font-bold">

@@ -22,7 +22,7 @@ const lang = useLangStore()
     <div class="flex items-center gap-3">
       <button
         @click="lang.toggleLang(); web3.playClick()"
-        class="px-3 py-1.5 text-xs font-bold rounded-lg border border-white/10 hover:border-violet-500/50 hover:bg-white/5 transition-all duration-200"
+        class="px-3 py-1.5 text-xs font-bold rounded-lg border border-white/10 hover:border-violet-500/50 hover:bg-white/5 transition-all duration-200 cursor-pointer"
       >
         {{ lang.currentLang.toUpperCase() }}
       </button>
@@ -31,7 +31,7 @@ const lang = useLangStore()
         v-if="!web3.isConnected"
         @click="web3.connectWallet()"
         :disabled="web3.isLoading"
-        class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-violet-600 to-cyan-500 hover:from-violet-500 hover:to-cyan-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-violet-900/40"
+        class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-violet-600 to-cyan-500 hover:from-violet-500 hover:to-cyan-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-violet-900/40 cursor-pointer"
       >
         <svg
           v-if="web3.isLoading"
@@ -72,7 +72,7 @@ const lang = useLangStore()
         </div>
         <button
           @click="web3.disconnectWallet()"
-          class="px-3 py-1.5 text-xs rounded-lg border border-white/10 hover:border-red-500/50 hover:text-red-400 transition-all duration-200"
+          class="px-3 py-1.5 text-xs rounded-lg border border-white/10 hover:border-red-500/50 hover:text-red-400 transition-all duration-200 cursor-pointer"
         >
           {{ lang.t.disconnect }}
         </button>

@@ -58,12 +58,13 @@ async function handleWithdraw() {
           step="0.001"
           min="0.001"
           placeholder="0.01"
-          class="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-violet-500 transition-colors"
+          :disabled="web3.isPending"
+          class="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-violet-500 transition-colors disabled:opacity-50"
         />
         <button
           @click="handleDeposit"
           :disabled="web3.isPending"
-          class="px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          class="px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
         >
           <span v-if="web3.isPending" class="animate-pulse">…</span>
           <span v-else>↑</span>
@@ -74,18 +75,28 @@ async function handleWithdraw() {
     <div class="space-y-2">
       <label class="text-xs text-slate-400">{{ lang.t.withdraw }}</label>
       <div class="flex gap-2">
-        <input
-          v-model="withdrawAmount"
-          type="number"
-          step="0.001"
-          min="0.001"
-          :placeholder="web3.casinoBalance"
-          class="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500 transition-colors"
-        />
+        <div class="relative flex-1">
+          <input
+            v-model="withdrawAmount"
+            type="number"
+            step="0.001"
+            min="0.001"
+            placeholder="0.0"
+            :disabled="web3.isPending"
+            class="w-full bg-white/5 border border-white/10 rounded-lg pl-3 pr-16 py-2 text-sm focus:outline-none focus:border-cyan-500 transition-colors disabled:opacity-50"
+          />
+          <button
+            @click="withdrawAmount = web3.casinoBalance; web3.playClick()"
+            :disabled="web3.isPending"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-violet-400 hover:text-violet-300 disabled:hover:text-violet-400 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed uppercase"
+          >
+            Max
+          </button>
+        </div>
         <button
           @click="handleWithdraw"
           :disabled="web3.isPending"
-          class="px-4 py-2 rounded-lg bg-cyan-700 hover:bg-cyan-600 text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          class="px-4 py-2 rounded-lg bg-cyan-700 hover:bg-cyan-600 text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
         >
           <span v-if="web3.isPending" class="animate-pulse">…</span>
           <span v-else>↓</span>
