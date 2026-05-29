@@ -25,6 +25,9 @@ const lastResult = ref(null)      // { won, result, payout, choice }
 const isFlipping = ref(false)     // coin animation flag
 const selectedSide = ref(null)    // 0 = Heads, 1 = Tails
 
+const isModalOpen = ref(false)
+const modalData = ref(null)
+
 const SIDES = [
   { id: 0, label: 'Орёл', emoji: '🦅' },
   { id: 1, label: 'Решка', emoji: '🔮' },
@@ -50,7 +53,19 @@ async function handleFlip() {
   await new Promise(r => setTimeout(r, 1500))
   isFlipping.value = false
 
-  if (result) lastResult.value = result
+  if (result) {
+    lastResult.value = result
+    modalData.value = {
+      won: result.won,
+      payout: result.payout,
+      bet: result.bet,
+      sideLabel: result.result === 0 ? 'Орёл 🦅' : 'Решка 🔮'
+    }
+    // Small delay to let the coin animation settle down before modal popup
+    setTimeout(() => {
+      isModalOpen.value = true
+    }, 400)
+  }
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -354,6 +369,53 @@ function formatTs(ts) {
     <footer class="relative z-10 text-center text-slate-700 text-xs pb-6">
       NovaBet Casino · Hackathon MVP · Sepolia Testnet
     </footer>
+
+    <!-- ── Game Result Modal ─────────────────────────────────────────── -->
+    <Transition name="modal">
+      <div v-if="isModalOpen && modalData" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div @click="isModalOpen = false" class="absolute inset-0 bg-slate-950/80 backdrop-blur-md"></div>
+        
+        <!-- Modal Card -->
+        <div class="relative z-10 w-full max-w-sm p-8 rounded-3xl border border-white/10 bg-slate-900/90 text-center shadow-[0_0_50px_rgba(0,0,0,0.8)]">
+          <!-- Glow effect depending on won/lost -->
+          <div class="absolute inset-0 -z-10 rounded-3xl opacity-20 blur-2xl transition-all duration-350"
+               :class="modalData.won ? 'bg-emerald-500 shadow-[0_0_80px_rgba(16,185,129,0.4)]' : 'bg-rose-500 shadow-[0_0_80px_rgba(244,63,94,0.4)]'"></div>
+
+          <div class="text-6xl mb-4 select-none">
+            {{ modalData.won ? '🎉' : '😢' }}
+          </div>
+
+          <h2 class="text-3xl font-black mb-2 tracking-wide"
+              :class="modalData.won ? 'text-emerald-400 drop-shadow-[0_0_12px_rgba(52,211,153,0.5)]' : 'text-rose-500 drop-shadow-[0_0_12px_rgba(244,63,94,0.3)]'">
+            {{ modalData.won ? 'Победа!' : 'Не повезло!' }}
+          </h2>
+
+          <div class="space-y-4 my-6">
+            <p class="text-slate-400 text-sm">
+              Выпало: <span class="text-white font-bold">{{ modalData.sideLabel }}</span>
+            </p>
+            
+            <div v-if="modalData.won" class="text-4xl font-extrabold text-white">
+              +{{ modalData.payout }} <span class="text-violet-400 text-2xl font-semibold">ETH</span>
+            </div>
+            <div v-else class="text-slate-400 text-sm font-medium">
+              Удача улыбнется в следующий раз!
+            </div>
+          </div>
+
+          <button
+            @click="isModalOpen = false; web3.playClick()"
+            class="w-full py-3.5 rounded-xl font-bold uppercase tracking-wider text-sm transition-all duration-200 active:scale-95"
+            :class="modalData.won
+              ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-[0_0_20px_rgba(16,185,129,0.4)]'
+              : 'bg-white/10 hover:bg-white/20 text-white'"
+          >
+            Играть еще
+          </button>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -380,5 +442,25 @@ function formatTs(ts) {
 }
 .fade-up-leave-to {
   opacity: 0;
+}
+
+/* Modal Transition (Fade + Scale) */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease;
+}
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+.modal-enter-active .relative,
+.modal-leave-active .relative {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.modal-enter-from .relative {
+  transform: scale(0.9);
+}
+.modal-leave-to .relative {
+  transform: scale(0.95);
 }
 </style>
