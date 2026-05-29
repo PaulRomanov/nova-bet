@@ -36,6 +36,7 @@ export const translations = {
     walletSimulationError: 'Ошибка симуляции кошелька',
     winTitle: '🎉 Победа!',
     loseTitle: '💀 Проигрыш',
+    coinFlip: 'Бросок монетки',
   },
   en: {
     casinoReserve: 'Casino Reserve',
@@ -71,6 +72,7 @@ export const translations = {
     walletSimulationError: 'Wallet simulation error',
     winTitle: '🎉 Win!',
     loseTitle: '💀 Lost',
+    coinFlip: 'Coin Flip',
   },
 }
 

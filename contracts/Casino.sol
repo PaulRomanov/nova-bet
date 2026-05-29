@@ -3,14 +3,14 @@ pragma solidity ^0.8.20;
 
 /**
  * @title NovaBet Casino - Coinflip Game
- * @author NovaBet Team (Hackathon MVP)
+ * @author NovaBet Team ( MVP)
  * @notice Provably fair coinflip game with 1.95x payout (2.5% house edge)
  *
  * @dev RANDOMNESS DISCLAIMER:
  *   This contract uses blockhash + block.timestamp + player address for pseudo-randomness.
  *   This is NOT suitable for production — miners can theoretically manipulate block variables.
  *   For production, use Chainlink VRF (https://docs.chain.link/vrf).
- *   This approach is acceptable for a hackathon MVP demonstration on Sepolia testnet.
+ *   This approach is acceptable for a  MVP demonstration on Sepolia testnet.
  */
 contract Casino {
     // ─── State ────────────────────────────────────────────────────────────────
