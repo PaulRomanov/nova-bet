@@ -5,7 +5,7 @@
 ### 🔗 Quick Links
 
 - **Live Demo URL:** [https://nova-bet-pink.vercel.app/](https://nova-bet-pink.vercel.app/)
-- **Смарт-контракт Sepolia:** `https://sepolia.etherscan.io/address/0xc9682f026629c21b04B0dcA73c43f6Ce11Fd00b4`
+- **Смарт-контракт Sepolia:** `https://sepolia.etherscan.io/address/0xaB8C2ad73570486B63e3Fb5Feb2A636a7644E642`
 
 ---
 
