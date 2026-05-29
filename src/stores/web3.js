@@ -71,20 +71,51 @@ export const useWeb3Store = defineStore('web3', () => {
   /** Parse user-friendly error from ethers/MetaMask errors */
   function parseError(err) {
     const msg = err?.message || ''
+    const reason = err?.reason || err?.data?.message || ''
+    const fullError = `${msg} ${reason}`.toLowerCase()
 
     // MetaMask action rejected
-    if (err?.code === 'ACTION_REJECTED' || err?.code === 4001 || msg.includes('user rejected')) {
+    if (err?.code === 'ACTION_REJECTED' || err?.code === 4001 || fullError.includes('user rejected')) {
       return lang.t.walletRejected
     }
 
     // MetaMask request already pending (e.g. error code -32002)
-    if (err?.code === -32002 || msg.includes('-32002') || msg.includes('already pending')) {
+    if (err?.code === -32002 || fullError.includes('-32002') || fullError.includes('already pending')) {
       return lang.t.errMetaMaskPending
     }
 
     // ethers v6 #notReady error
-    if (msg.includes('#notReady') || msg.includes('private member')) {
+    if (fullError.includes('#notready') || fullError.includes('private member')) {
       return lang.t.errNotReady
+    }
+
+    // Contract errors localization
+    if (fullError.includes('insufficient balance')) {
+      return lang.t.errCasinoInsufficientBalance
+    }
+    if (fullError.includes('insufficient casino reserve') || fullError.includes('insufficient reserve')) {
+      return lang.t.errCasinoInsufficientReserve
+    }
+    if (fullError.includes('bet too small')) {
+      return lang.t.errCasinoBetTooSmall
+    }
+    if (fullError.includes('bet too large')) {
+      return lang.t.errCasinoBetTooLarge
+    }
+    if (fullError.includes('zero deposit')) {
+      return lang.t.errCasinoZeroDeposit
+    }
+    if (fullError.includes('zero withdraw')) {
+      return lang.t.errCasinoZeroWithdraw
+    }
+    if (fullError.includes('transfer failed')) {
+      return lang.t.errCasinoTransferFailed
+    }
+    if (fullError.includes('invalid choice')) {
+      return lang.t.errCasinoInvalidChoice
+    }
+    if (fullError.includes('not owner')) {
+      return lang.t.errCasinoNotOwner
     }
 
     if (err?.reason) return err.reason
