@@ -171,8 +171,11 @@ export const useWeb3Store = defineStore('web3', () => {
 
     try {
       const bet = parseFloat(amountEth)
-      if (bet > parseFloat(walletBalance.value)) {
-        throw new Error('Insufficient funds in your wallet.')
+      if (isNaN(bet) || bet <= 0) {
+        throw new Error('Enter a valid bet amount.')
+      }
+      if (bet > parseFloat(casinoBalance.value)) {
+        throw new Error('Недостаточно средств на депозите казино. Пожалуйста, пополните баланс!')
       }
 
       // Математика генерации случайности (как в смарт-контракте)
@@ -182,8 +185,8 @@ export const useWeb3Store = defineStore('web3', () => {
       let payout = 0
       if (isWinner) {
         payout = bet * 1.95 // Выплата 1.95x из контракта
-        walletBalance.value = (
-          parseFloat(walletBalance.value) +
+        casinoBalance.value = (
+          parseFloat(casinoBalance.value) +
           (payout - bet)
         ).toFixed(4)
         casinoReserve.value = (
@@ -196,7 +199,7 @@ export const useWeb3Store = defineStore('web3', () => {
           winAudio.play().catch((e) => console.log('Audio win autoplay prevented:', e))
         }
       } else {
-        walletBalance.value = (parseFloat(walletBalance.value) - bet).toFixed(4)
+        casinoBalance.value = (parseFloat(casinoBalance.value) - bet).toFixed(4)
         casinoReserve.value = (parseFloat(casinoReserve.value) + bet).toFixed(4)
 
         if (loseAudio) {
