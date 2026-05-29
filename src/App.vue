@@ -12,11 +12,9 @@ import ResultModal from './components/ResultModal.vue'
 const web3 = useWeb3Store()
 const lang = useLangStore()
 
-// ─── Result Modal State ─────────────────────────────────────────────────────
 const isModalOpen = ref(false)
 const modalData = ref(null)
 
-/** Receives game result from CoinFlipGame and shows the result modal */
 function openResultModal(result) {
   modalData.value = result
   isModalOpen.value = true
@@ -25,7 +23,6 @@ function openResultModal(result) {
 
 <template>
   <div class="min-h-screen bg-gray-950 text-slate-100 font-sans">
-    <!-- ── Ambient background glows ──────────────────────────────────── -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden">
       <div
         class="absolute -top-40 -left-40 w-96 h-96 bg-violet-700 rounded-full opacity-20 blur-3xl"
@@ -38,10 +35,8 @@ function openResultModal(result) {
       />
     </div>
 
-    <!-- ── Header + Error Toast ───────────────────────────────────────── -->
     <TheHeader />
 
-    <!-- ── Contract warning ───────────────────────────────────────────── -->
     <div
       v-if="!web3.isContractConfigured"
       class="relative z-10 mx-auto mt-6 max-w-2xl px-5 py-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm text-center"
@@ -49,7 +44,6 @@ function openResultModal(result) {
       {{ lang.t.contractWarning }}
     </div>
 
-    <!-- ── Main layout ────────────────────────────────────────────────── -->
     <main
       class="relative z-10 max-w-5xl mx-auto px-4 py-10 grid gap-6 lg:grid-cols-3"
     >
@@ -60,12 +54,9 @@ function openResultModal(result) {
       <CoinFlipGame @game-finished="openResultModal" />
     </main>
 
-    <!-- ── Footer ─────────────────────────────────────────────────────── -->
     <footer class="relative z-10 text-center text-slate-700 text-xs pb-6">
       NovaBet Casino · MVP · Sepolia Testnet
     </footer>
-
-    <!-- ── Result Modal ───────────────────────────────────────────────── -->
     <ResultModal
       :is-open="isModalOpen"
       :data="modalData"

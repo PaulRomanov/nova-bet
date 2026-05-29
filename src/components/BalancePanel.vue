@@ -22,21 +22,25 @@ async function handleWithdraw() {
 </script>
 
 <template>
-  <!-- Casino Reserve Card -->
-  <div class="rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-sm">
+  <div
+    class="rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-sm"
+  >
     <div class="text-xs text-slate-400 uppercase tracking-widest mb-1">
       🏦 {{ lang.t.casinoReserve }}
     </div>
-    <div class="text-3xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+    <div
+      class="text-3xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent"
+    >
       {{ web3.casinoReserve }} ETH
     </div>
     <div v-if="web3.isConnected" class="mt-3 text-xs text-slate-500">
       {{ lang.t.yourCasinoBalance }}:
-      <span class="text-cyan-400 font-semibold">{{ web3.casinoBalance }} ETH</span>
+      <span class="text-cyan-400 font-semibold"
+        >{{ web3.casinoBalance }} ETH</span
+      >
     </div>
   </div>
 
-  <!-- Deposit / Withdraw -->
   <div
     v-if="web3.isConnected"
     class="rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-sm space-y-4"
@@ -45,7 +49,6 @@ async function handleWithdraw() {
       💸 {{ lang.t.depositWithdraw }}
     </div>
 
-    <!-- Deposit Row -->
     <div class="space-y-2">
       <label class="text-xs text-slate-400">{{ lang.t.deposit }}</label>
       <div class="flex gap-2">
@@ -68,7 +71,6 @@ async function handleWithdraw() {
       </div>
     </div>
 
-    <!-- Withdraw Row -->
     <div class="space-y-2">
       <label class="text-xs text-slate-400">{{ lang.t.withdraw }}</label>
       <div class="flex gap-2">

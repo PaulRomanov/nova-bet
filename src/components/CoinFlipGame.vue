@@ -3,7 +3,6 @@ import { ref, computed } from 'vue'
 import { useWeb3Store } from '../stores/web3.js'
 import { useLangStore } from '../stores/lang.js'
 
-// Emits result data upward so App.vue can open the modal
 const emit = defineEmits(['game-finished'])
 
 const web3 = useWeb3Store()
@@ -12,7 +11,7 @@ const lang = useLangStore()
 const betAmount = ref('0.01')
 const lastResult = ref(null)
 const isFlipping = ref(false)
-const selectedSide = ref(null) // 0 = Heads, 1 = Tails
+const selectedSide = ref(null)
 
 const SIDES = computed(() => [
   { id: 0, label: lang.t.heads, emoji: '🦅' },
@@ -55,7 +54,8 @@ async function handleFlip() {
         won: result.won,
         payout: result.payout,
         bet: result.bet,
-        sideLabel: result.result === 0 ? `${lang.t.heads} 🦅` : `${lang.t.tails} 🔮`,
+        sideLabel:
+          result.result === 0 ? `${lang.t.heads} 🦅` : `${lang.t.tails} 🔮`,
       })
     }, 400)
   }
@@ -77,31 +77,35 @@ function selectChip(chip) {
     class="lg:col-span-2 rounded-2xl bg-white/5 border border-white/10 p-8 backdrop-blur-sm flex flex-col items-center gap-8"
   >
     <h1 class="text-2xl font-bold tracking-tight text-center">
-      <span class="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+      <span
+        class="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent"
+      >
         {{ lang.t.coinFlip }}
       </span>
       <span class="ml-2 text-slate-500 text-base font-normal">· 1.95x</span>
     </h1>
 
-    <!-- Coin animation -->
     <div class="relative w-40 h-40 select-none">
       <div
         class="w-full h-full rounded-full flex items-center justify-center text-7xl transition-all duration-300"
         :class="{
           'animate-spin': isFlipping,
-          'shadow-[0_0_40px_rgba(139,92,246,0.6)]': !isFlipping && lastResult?.won,
-          'shadow-[0_0_40px_rgba(239,68,68,0.5)]': !isFlipping && lastResult && !lastResult.won,
+          'shadow-[0_0_40px_rgba(139,92,246,0.6)]':
+            !isFlipping && lastResult?.won,
+          'shadow-[0_0_40px_rgba(239,68,68,0.5)]':
+            !isFlipping && lastResult && !lastResult.won,
           'shadow-[0_0_20px_rgba(139,92,246,0.3)]': !lastResult,
         }"
         style="background: radial-gradient(circle at 35% 35%, #4c1d95, #1e1b4b)"
       >
         <span v-if="isFlipping">🌀</span>
-        <span v-else-if="lastResult">{{ lastResult.result === 0 ? '🦅' : '🔮' }}</span>
+        <span v-else-if="lastResult">{{
+          lastResult.result === 0 ? '🦅' : '🔮'
+        }}</span>
         <span v-else>🪙</span>
       </div>
     </div>
 
-    <!-- Win / Lose inline result -->
     <Transition name="fade-up">
       <div v-if="lastResult && !isFlipping" class="text-center">
         <div
@@ -120,7 +124,6 @@ function selectChip(chip) {
       </div>
     </Transition>
 
-    <!-- Side selection -->
     <div class="flex gap-4 w-full max-w-sm">
       <button
         v-for="side in SIDES"
@@ -134,15 +137,17 @@ function selectChip(chip) {
         "
       >
         <span>{{ side.emoji }}</span>
-        <span class="text-sm font-semibold text-slate-300">{{ side.label }}</span>
+        <span class="text-sm font-semibold text-slate-300">{{
+          side.label
+        }}</span>
       </button>
     </div>
 
-    <!-- Bet input -->
     <div class="w-full max-w-sm space-y-2">
-      <label class="text-xs text-slate-400 uppercase tracking-widest">{{ lang.t.bet }}</label>
+      <label class="text-xs text-slate-400 uppercase tracking-widest">{{
+        lang.t.bet
+      }}</label>
       <div class="flex gap-2">
-        <!-- Quick bet chips -->
         <div class="flex gap-1">
           <button
             v-for="chip in ['0.001', '0.01', '0.05', '0.1']"
@@ -170,14 +175,15 @@ function selectChip(chip) {
       <div class="text-xs text-slate-600">{{ lang.t.minMax }}</div>
     </div>
 
-    <!-- Play button -->
     <button
       v-if="web3.isConnected"
       @click="handleFlip"
       :disabled="web3.isPending || isFlipping || !web3.isContractConfigured"
       class="w-full max-w-sm py-4 rounded-2xl text-lg font-black uppercase tracking-widest bg-gradient-to-r from-violet-600 to-cyan-500 hover:from-violet-500 hover:to-cyan-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-xl shadow-violet-900/50 active:scale-95"
     >
-      <span v-if="isFlipping || web3.isPending" class="animate-pulse">{{ lang.t.waiting }}</span>
+      <span v-if="isFlipping || web3.isPending" class="animate-pulse">{{
+        lang.t.waiting
+      }}</span>
       <span v-else>🎲 {{ lang.t.flipCoin }}</span>
     </button>
 
@@ -189,8 +195,9 @@ function selectChip(chip) {
       {{ lang.t.playToEarn }}
     </button>
 
-    <!-- House edge note -->
-    <p class="text-xs text-slate-700 text-center max-w-xs">{{ lang.t.houseEdge }}</p>
+    <p class="text-xs text-slate-700 text-center max-w-xs">
+      {{ lang.t.houseEdge }}
+    </p>
   </section>
 </template>
 

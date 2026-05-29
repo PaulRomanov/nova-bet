@@ -38,17 +38,14 @@ function close() {
       v-if="isOpen && data"
       class="fixed inset-0 z-50 flex items-center justify-center p-4"
     >
-      <!-- Backdrop -->
       <div
         @click="close"
         class="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
       />
 
-      <!-- Modal Card -->
       <div
         class="relative z-10 w-full max-w-sm p-8 rounded-3xl border border-white/10 bg-slate-900/90 text-center shadow-[0_0_50px_rgba(0,0,0,0.8)]"
       >
-        <!-- Ambient glow -->
         <div
           class="absolute inset-0 -z-10 rounded-3xl opacity-20 blur-2xl"
           :class="
@@ -58,12 +55,9 @@ function close() {
           "
         />
 
-        <!-- Emoji -->
         <div class="text-6xl mb-4 select-none">
           {{ data.won ? '🎉' : '😢' }}
         </div>
-
-        <!-- Title -->
         <h2
           class="text-3xl font-black mb-2 tracking-wide"
           :class="
@@ -75,7 +69,6 @@ function close() {
           {{ data.won ? lang.t.winModalTitle : lang.t.loseModalTitle }}
         </h2>
 
-        <!-- Body -->
         <div class="space-y-4 my-6">
           <p class="text-slate-400 text-sm">
             {{ lang.t.felled }}:
@@ -91,7 +84,6 @@ function close() {
           </div>
         </div>
 
-        <!-- CTA button -->
         <button
           @click="close"
           class="w-full py-3.5 rounded-xl font-bold uppercase tracking-wider text-sm transition-all duration-200 active:scale-95"
