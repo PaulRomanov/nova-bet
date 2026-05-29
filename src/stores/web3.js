@@ -95,18 +95,30 @@ export const useWeb3Store = defineStore('web3', () => {
 
   /** Read balances from the contract */
   async function refreshBalances() {
-    if (!contract.value || !address.value || !provider.value) return
+    if (!provider.value || !address.value) return
+
+    // 1. Fetch wallet balance (independent of contract)
     try {
-      const [casinoBal, reserve, walletBal] = await Promise.all([
+      const walletBal = await provider.value.getBalance(address.value)
+      walletBalance.value = parseFloat(ethers.formatEther(walletBal)).toFixed(4)
+    } catch (err) {
+      console.error('wallet balance fetch error:', err)
+    }
+
+    // 2. Fetch contract balances
+    if (!contract.value) return
+    try {
+      const [casinoBal, reserve] = await Promise.all([
         contract.value.getBalance(address.value),
         contract.value.getCasinoReserve(),
-        provider.value.getBalance(address.value),
       ])
       casinoBalance.value = parseFloat(ethers.formatEther(casinoBal)).toFixed(4)
       casinoReserve.value = parseFloat(ethers.formatEther(reserve)).toFixed(4)
-      walletBalance.value = parseFloat(ethers.formatEther(walletBal)).toFixed(4)
     } catch (err) {
-      console.error('refreshBalances error:', err)
+      console.error('contract balances fetch error:', err)
+      // Reset casino balances to 0 if contract calls fail (e.g. wrong contract address)
+      casinoBalance.value = '0.0000'
+      casinoReserve.value = '0.0000'
     }
   }
 
