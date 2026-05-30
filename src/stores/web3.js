@@ -35,7 +35,7 @@ export const useWeb3Store = defineStore('web3', () => {
   )
 
   const isWrongNetwork = computed(
-    () => isConnected.value && chainId.value !== SEPOLIA_CHAIN_ID,
+    () => chainId.value !== null && chainId.value !== SEPOLIA_CHAIN_ID,
   )
 
   const isContractConfigured = computed(
@@ -153,9 +153,11 @@ export const useWeb3Store = defineStore('web3', () => {
     }
   }
 
-  // ─── MetaMask event listeners (attached once on connect) ───────────────────
+  // ─── MetaMask event listeners (attached once on initialization or connect) ───
+  let listenersAttached = false
   function attachMetaMaskListeners() {
-    if (!window.ethereum) return
+    if (!window.ethereum || listenersAttached) return
+    listenersAttached = true
 
     window.ethereum.on('accountsChanged', async (accounts) => {
       if (accounts.length === 0) {
@@ -166,12 +168,47 @@ export const useWeb3Store = defineStore('web3', () => {
       }
     })
 
-    window.ethereum.on('chainChanged', (newChainId) => {
-      // chainChanged passes hex string, convert to number
-      chainId.value = parseInt(newChainId, 16)
-      // Reload to reset contract state cleanly
+    window.ethereum.on('chainChanged', (hexChainId) => {
+      console.log('Network changed to:', hexChainId)
       window.location.reload()
     })
+  }
+
+  // ─── Auto Connect & Network Check on Startup ───────────────────────────────
+  async function tryAutoConnect() {
+    if (!window.ethereum) return
+
+    // 1. Сразу вешаем слушатели и проверяем сеть, даже если кошелек не подключен
+    attachMetaMaskListeners()
+    
+    try {
+      const hexChainId = await window.ethereum.request({ method: 'eth_chainId' })
+      chainId.value = parseInt(hexChainId, 16)
+      
+      // 2. И только потом проверяем, авторизован ли аккаунт
+      const accounts = await window.ethereum.request({ method: 'eth_accounts' })
+      if (accounts.length > 0) {
+        provider.value = new ethers.BrowserProvider(window.ethereum)
+        signer.value = await provider.value.getSigner()
+        address.value = accounts[0]
+        isConnected.value = true
+
+        contract.value = new ethers.Contract(
+          CONTRACT_ADDRESS,
+          CONTRACT_ABI,
+          signer.value,
+        )
+
+        await refreshBalances()
+      }
+    } catch (err) {
+      console.error('Initialization error:', err)
+    }
+  }
+
+  // Auto-run connection check on store initialization
+  if (typeof window !== 'undefined') {
+    tryAutoConnect()
   }
 
   // ─── Connect Wallet ────────────────────────────────────────────────────────
@@ -230,9 +267,8 @@ export const useWeb3Store = defineStore('web3', () => {
   }
 
   // ─── Disconnect ────────────────────────────────────────────────────────────
-  function disconnectWallet() {
+  async function disconnectWallet() {
     address.value = ''
-    chainId.value = null
     walletBalance.value = '0.0000'
     casinoBalance.value = '0.0000'
     casinoReserve.value = '0.0000'
@@ -241,6 +277,15 @@ export const useWeb3Store = defineStore('web3', () => {
     provider.value = null
     signer.value = null
     contract.value = null
+
+    if (window.ethereum) {
+      try {
+        const hexChainId = await window.ethereum.request({ method: 'eth_chainId' })
+        chainId.value = parseInt(hexChainId, 16)
+      } catch (err) {
+        console.error('Error fetching chainId on disconnect:', err)
+      }
+    }
   }
 
   // ─── Deposit ───────────────────────────────────────────────────────────────
@@ -249,7 +294,8 @@ export const useWeb3Store = defineStore('web3', () => {
     isPending.value = true
     error.value = ''
     try {
-      const value = ethers.parseEther(amountEth)
+      const sanitizedAmount = String(amountEth).replace(',', '.').trim()
+      const value = ethers.parseEther(sanitizedAmount)
       const tx = await contract.value.deposit({ value })
       await tx.wait()
       await refreshBalances()
@@ -266,7 +312,8 @@ export const useWeb3Store = defineStore('web3', () => {
     isPending.value = true
     error.value = ''
     try {
-      const amount = ethers.parseEther(amountEth)
+      const sanitizedAmount = String(amountEth).replace(',', '.').trim()
+      const amount = ethers.parseEther(sanitizedAmount)
       const tx = await contract.value.withdraw(amount)
       await tx.wait()
       await refreshBalances()
@@ -290,7 +337,8 @@ export const useWeb3Store = defineStore('web3', () => {
     }
 
     try {
-      const betAmount = ethers.parseEther(amountEth)
+      const sanitizedAmount = String(amountEth).replace(',', '.').trim()
+      const betAmount = ethers.parseEther(sanitizedAmount)
       const tx = await contract.value.flip(choice, betAmount)
       const receipt = await tx.wait()
 
@@ -370,6 +418,7 @@ export const useWeb3Store = defineStore('web3', () => {
     connectWallet,
     disconnectWallet,
     switchToSepolia,
+    tryAutoConnect,
     deposit,
     withdraw,
     flip,
