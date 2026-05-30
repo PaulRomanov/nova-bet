@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useWeb3Store } from '../stores/web3.js'
 import { useLangStore } from '../stores/lang.js'
 import CoinSvg from './CoinSvg.vue'
@@ -17,6 +17,18 @@ const isFlipping = ref(false)
 const selectedSide = ref<number | null>(null)
 const hoveredSide = ref<number | null>(null)
 const showFairnessInfo = ref(false)
+
+// Reset game state on wallet disconnect
+watch(
+  () => web3.isConnected,
+  (connected) => {
+    if (!connected) {
+      selectedSide.value = null
+      lastResult.value = null
+      hoveredSide.value = null
+    }
+  }
+)
 
 const SIDES = computed(() => [
   { id: 0, label: lang.t.heads },
@@ -80,6 +92,7 @@ async function handleFlip() {
 
 function selectSide(id: number) {
   selectedSide.value = id
+  lastResult.value = null // Reset previous game result when a new side is selected to instantly update the central coin image and hide old win/lose messages
   web3.playClick()
 }
 
